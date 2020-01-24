@@ -1,8 +1,9 @@
 export interface Employee {
-  emp_address: string;
-  emp_email: string;
-  emp_id: number;
-  emp_name: string;
-  emp_phone: string;
-  emp_role: string;
+  employee_address: string;
+  employee_email: string;
+  employee_id: number;
+  employee_firstname: string;
+  employee_lastname: string;
+  employee_phonenumber: string;
+  employee_role: string;
 }

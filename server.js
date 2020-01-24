@@ -37,9 +37,14 @@ passport.use(
       console.log("profile", profile);
       console.log("assertion", profile.getAssertion.toString());
       userEmail = profile.nameID;
+      userFirstName = profile["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname"]
+      userlastName = profile["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"]
+     
       return done(null, {
         email: profile.email,
-        name: profile.name
+        displayName: profile.cn,
+        firstName: profile.givenName,
+        lastName: profile.sn
       });
     }
   )
@@ -77,7 +82,11 @@ app.post(
   function (req, res) {
     // sets a cookie called ttemail and sets its max age to 1 day
     res.cookie('ttemail', userEmail, { maxAge: 1 * 24 * 60 * 60 * 1000, secure: true, httpOnly: false })
-    res.redirect("https://tpms-ui.herokuapp.com/verify");
+    res.cookie('userFirstName', userFirstName, { maxAge: 1 * 24 * 60 * 60 * 1000, secure: true, httpOnly: false })
+    res.cookie('userlastName', userlastName, { maxAge: 1 * 24 * 60 * 60 * 1000, secure: true, httpOnly: false })
+    
+    
+    res.redirect("https://tpms-ui.herokuapp.com");
   }
 );
 
@@ -93,4 +102,4 @@ app.get("/*", function (req, res) {
 });
 
 // Start the app by listening on the default Heroku port
-app.listen(process.env.PORT || 8080);
+app.listen(process.env.PORT || 8081);

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ApplicationRef } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -17,12 +17,18 @@ import { ProjectInterface } from 'src/app/screens/project-interface';
 
 export class DevelopersComponent implements OnInit {
   currentDevsId: number
-  developers: Array<Employee> = [
+  developers: Array<any> = [
     // {value: 'Dennis Bill'},
     // {value: 'Francis Billa'},
     // {value: 'Francis Billa'}
   ];
-  // devselected = 'option2';
+
+  
+selectedDeveloper_id
+
+selectedProject_id
+assignedNewProject =[]
+
   selectable = true;
   removable = true;
   projects = [
@@ -30,36 +36,28 @@ export class DevelopersComponent implements OnInit {
     // {value: 'TCMS'},
     // {value: 'DBMS'}
   ];
-  // projselected = 'option2';
-
-  // assignedprojects = [
-  //   { project_id: 1, title: "Some" },
-  //   { project_id: 2, title: "djsd" },
 
 
-  // ];
+
+
   assignedprojects = [{ project_id: 1, title: "Devs projects appear here" }]
 
-  // incomingProject = { project_id: 2, title: "" };
+
 
 
 
   myControl = new FormControl();
-  options: Array<Employee> = [];
-  filteredOptions: Observable<Employee[]>;
+  options: Array<any> = [];
+  filteredOptions: Observable<any>;
 
   projectmyControl = new FormControl();
-  projectoptions: Array<ProjectInterface> = [];
-  projectfilteredOptions: Observable<ProjectInterface[]>;
-  assignedProjects: Array<ProjectInterface> = []
+  projectoptions: Array<any> = [];
+  projectfilteredOptions: Observable<any>;
+  assignedProjects: any 
+  // assignedProjects: Array<ProjectInterface> = []
 
 
-
-  
-
-
-
-  constructor(private ProjectService: ProjectService, private devService: AppService) { }
+  constructor(private ProjectService: ProjectService, private devService: AppService,private cdr: ApplicationRef) { }
 
   developerObservable: Observable<Employee[]>;
   devs = [];
@@ -67,112 +65,153 @@ export class DevelopersComponent implements OnInit {
   projectsObservable: Observable<ProjectInterface[]>;
   project = [];
 
-  assignedObservable: Observable<ProjectInterface[]>;
+  assignedObservable: Observable<any[]>;
   assign = [];
 
   ngOnInit() {
     this.devService.getDevelopers().subscribe(response => {
-      this.developers = response;
-      this.options = response
-      // this.developers.forEach(e => console.log(response.emp_name))
+      console.log("Response from server | ",response)
+      if(response.code === "00"){
+        this.options = response.data;
+        
+      }else{
+        console.log(response);
+      }
+      // this.developers = response;
+      // this.options = response
+      //this.developers.forEach(e => console.log("Response from server | ",response))
     });
     this.ProjectService.getProject().subscribe(response => {
-      this.projects = response;
-      this.projectoptions = response
-      console.log(response);
-      
+      console.log("Response from server | ",response)
+      if(response.code === "00"){
+        this.projectoptions = response.data;
+      }else{
+        console.log(response);
+      }
+    
     });
     this.filterOptions()
 
     this.projectfilterOptions()
 
+    this.updateNewProjects()
 
+
+
+    
   }
-  remove(dev: ProjectInterface): void {
-    const index = this.assignedProjects.indexOf(dev);
+  remove(dev: any) {
+    console.log("Printing remove project | ",dev)
+    console.log("Printing remove project_id | ",dev.project_id)
+    console.log("Printing remove employee_id | ",this.selectedDeveloper_id)
+    this.ProjectService
+    .removeProjectFromEmployee(dev.project_id,this.selectedDeveloper_id)
+    .subscribe(response => {
+      console.log("Printing response | ", response)
+      if(response.code === "00"){
+        this.updateNewProjects();
+      }else{
+        console.log(response);
+      }
+    
+    });
+    
+  }
+
+  remove_one(dev: ProjectInterface): void {
+    const index = this.assignedNewProject.indexOf(dev);
 
     if (index >= 0) {
-      this.assignedProjects.splice(index, 1);
+      this.assignedNewProject.splice(index, 1);
     }
     
   }
-  private _projectfilter(value: string): ProjectInterface[] {
-    const filterValue = value.toLowerCase();
-    // return this.options.filter(option => option.emp_name.toLowerCase().includes(filterValue));
-    return this.projectoptions.filter(option => option.title.toLowerCase().indexOf(filterValue) === 0)
-  }
-  
- projectfilterOptions() {
-  this.projectfilteredOptions = this.projectmyControl.valueChanges
-    .pipe(
-      startWith(''),
-      map(value => typeof value === 'string' ? value : value.title),
-      map(title => title ? this._projectfilter(title) : this.projectoptions.slice())
-    );
-}
-projectdisplayFn(user?: ProjectInterface): string | undefined {
-  // if (user !== null) {
-  //   // fetch assigned projects
-  //   this.ProjectService
-  //     .getAssignedProject(user.project_id.toString())
-  //     .subscribe(response => {
-  //       // this.incomingProject.project_id = response.project_id;
-  //       // localStorage.setItem("pid", response.project_id.toString());
-  //       // // this.assignedprojects.length=0
-  //       // this.assignedprojects[0].project_id = response.project_id;
-  //       // this.assignedprojects[0].title = response.title;
-  //       this.assignedProjects.push(response);
-  //       // console.log(response);
-
-  //     });
-  // }
-  if (user) {
-    console.log(user);
-    this.assignedProjects.push(user)
-  } else {
-    console.log("non");
     
+  displayFn(user?: any): any | undefined {
+    if (user !== null) {
+      this.selectedDeveloper_id = user.employee.employee_id
+      this.assignedProjects = user.projects;
+      console.log("Printing user projects | ", user.projects);
+    }
+    return user ? user.employee.employee_firstname : undefined;
   }
-  
-  
-  return user ? user.title : undefined;
-}
+
+
+  projectdisplayFn(project?: any): any | undefined {
+
+    if (project !== null) {
+      this.selectedProject_id =project.project.project_id
+      this.assignProjectToEmployee(this.selectedDeveloper_id,this.selectedProject_id);
+      // console.log("Printing project | ",project);
+    }   
+    return project ? project.project.project_name : undefined;
+  }
+
+  assignProjectToEmployee(employee_id,project_id){
+
+    this.ProjectService
+    .assignProjectToEmployee(project_id,employee_id)
+    .subscribe(response => {
+      console.log("Assign Project | ", response)
+      if(response.code === "00"){
+        this.updateNewProjects();
+      }else{
+        console.log(response);
+      }
+    
+    });
+
+  }
+
+  updateNewProjects(){
+    
+    this.ProjectService
+        .getAssignedProject(this.selectedDeveloper_id)
+        .subscribe(response => {
+          console.log("Printing projects | ", response.data.projects);
+          if(response.code === "00"){
+            this.assignedProjects = response.data.projects;
+          }else{
+            console.log(response)
+          }
+        
+        });
+
+
+  }
+
+
 
   private _filter(value: string): Employee[] {
     const filterValue = value.toLowerCase();
+    return this.options.filter(option => option.employee.employee_firstname.toLowerCase().indexOf(filterValue) === 0)
+    
     // return this.options.filter(option => option.emp_name.toLowerCase().includes(filterValue));
-    return this.options.filter(option => option.emp_name.toLowerCase().indexOf(filterValue) === 0)
+    //return this.options.filter(option => option.employee_firstname.toLowerCase().indexOf(filterValue) === 0)
+  }
+  private _projectfilter(value: string): ProjectInterface[] {
+    const filterValue = value.toLowerCase();
+    // console.log("Filtering ",filterValue);
+    
+    // return this.options.filter(option => option.emp_name.toLowerCase().includes(filterValue));
+    return this.projectoptions.filter(option => option.project.project_name.toLowerCase().indexOf(filterValue) === 0)
   }
   filterOptions() {
     this.filteredOptions = this.myControl.valueChanges
       .pipe(
         startWith(''),
-        map(value => typeof value === 'string' ? value : value.emp_name),
-        map(emp_name => emp_name ? this._filter(emp_name) : this.options.slice())
+        map(value => typeof value === 'string' ? value : value.employee.employee_firstname),
+        map(employee_firstname => employee_firstname ? this._filter(employee_firstname) : this.options.slice())
       );
   }
-  displayFn(user?: Employee): string | undefined {
-    if (user !== null) {
-      // fetch assigned projects
-      this.ProjectService
-        .getAssignedProject(user.emp_id.toString())
-        .subscribe(response => {
-          // this.incomingProject.project_id = response.project_id;
-          // localStorage.setItem("pid", response.project_id.toString());
-          // // this.assignedprojects.length=0
-          // this.assignedprojects[0].project_id = response.project_id;
-          // this.assignedprojects[0].title = response.title;
-          this.assignedProjects.push(response);
-          // console.log(response);
 
-        });
-    }
-
-
-
-
-    // 
-    return user ? user.emp_name : undefined;
+  projectfilterOptions() {
+    this.projectfilteredOptions = this.projectmyControl.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.project.project_name),
+        map(project_name => project_name ? this._projectfilter(project_name) : this.projectoptions.slice())
+      );
   }
 
 
@@ -186,7 +225,7 @@ projectdisplayFn(user?: ProjectInterface): string | undefined {
     // // console.log(emp)
 
     this.ProjectService
-      .getAssignedProject(emp.emp_id)
+      .getAssignedProject(emp.employee_id)
       .subscribe(response => {
         // this.incomingProject.project_id = response.project_id;
         // localStorage.setItem("pid", response.project_id.toString());

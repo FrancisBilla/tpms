@@ -12,17 +12,17 @@ import { HttpClient } from '@angular/common/http';
   // styleUrls: ['./area.component.scss']
 })
 export class AreaComponent implements OnInit {
-  url = 'https://developerservice03.herokuapp.com/report';  
+  url = 'https://employee.services.turntabl.io/v1/api/getlogged';  
   data: Data[];  
-  Dates = [];  
+  Dates = []; 
   Project = [];  
   Volunteer=[];
   Sick=[];
-  Vacation=[];
-  // Linechart = [];  
+  Vacation= [];
+
 
   chartOptions: {};
-  // @Input() series: any = [];
+ 
 
   Highcharts = Highcharts;
 
@@ -34,11 +34,10 @@ export class AreaComponent implements OnInit {
   ngOnInit() {
     this.httpClient.get(this.url).subscribe((result: Data[]) => {  
       result.forEach(x => {  
-        this.Dates.push(x.logged_date);  
-        this.Project.push(x.total_project_hours);
-        this.Volunteer.push(x.total_volunteering_hours);
-        this.Sick.push(x.sick);
-        this.Vacation.push(x.vacation);  
+        this.Dates.push(x.log_date);  
+        this.Project.push(x.project_hours);
+        this.Sick.push(x.vacation_hours);
+        this.Vacation.push(x.sick_hours);  
       });  
      this. chartOptions = {   
          chart: {
@@ -113,12 +112,12 @@ export class AreaComponent implements OnInit {
 
     HC_exporting(Highcharts);
 
+
     setTimeout(() => {
-      window.dispatchEvent(
-        new Event('resize')
-      );
-    }, 300);
+    }, 3000);
+   
   }); 
+  
   }
 
 }

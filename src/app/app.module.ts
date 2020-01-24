@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, Component } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import {FormControl} from '@angular/forms';
 
 // Cookie stuff
 import {CookieService} from 'ngx-cookie-service';
@@ -46,7 +47,6 @@ import {MatListModule} from '@angular/material/list';
 
 
 import { ViewChild, HostListener, AfterViewInit, ChangeDetectorRef } from '@angular/core';
-import { ReportComponent } from './screens/admin/components/report/report.component';
 import { AreaComponent } from './screens/admin/components/area/area.component';
 import { HighchartsChartModule } from 'highcharts-angular';
 
@@ -68,7 +68,6 @@ import { HighchartsChartModule } from 'highcharts-angular';
     NavigationComponent,
     VerifyComponent,
     NavComponent,
-    ReportComponent,
     AreaComponent,
 
   ],
@@ -94,7 +93,8 @@ import { HighchartsChartModule } from 'highcharts-angular';
     MatSelectModule,
     MatAutocompleteModule,
     MatListModule,
-    HighchartsChartModule
+    HighchartsChartModule,
+
     
 
 

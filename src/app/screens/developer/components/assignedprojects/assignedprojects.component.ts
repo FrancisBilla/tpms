@@ -9,6 +9,12 @@ import { Projectlogging } from 'src/app/projectlogging';
 import { ProjectloggingService } from 'src/app/projectlogging.service';
 import { ProjectService } from 'src/app/project.service';
 
+
+export interface Food {
+  value: string;
+  viewValue: string;
+}
+
 export interface PeriodicElement {
   title: string;
   description: string;
@@ -33,9 +39,12 @@ const ELEMENT_DATA: PeriodicElement[] = [
   templateUrl: './assignedprojects.component.html',
   styleUrls: ['./assignedprojects.component.css']
 })
+
+
 export class AssignedprojectsComponent implements OnInit {
   incomingProject = { project_id: 2, title: '' };
   showAlert: boolean = false;
+  userProjects: any
 
   hourform = new FormGroup({
     project_hours: new FormControl(''),
@@ -51,6 +60,7 @@ export class AssignedprojectsComponent implements OnInit {
     private projectService: ProjectService
   ) {}
   newProject = '';
+  assignedprojects =[{title: "tpms"}]
   displayedColumns: string[] = [
     'Web Services',
     'Volunteering',
@@ -65,15 +75,26 @@ export class AssignedprojectsComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  ngOnInit() {
-    this.projectService
-      .getAssignedProject(localStorage.getItem('empId'))
-      .subscribe(response => {
-        // this.incomingProject.project_id = response.project_id;
-        localStorage.setItem('pid', response.project_id.toString());
-        this.incomingProject.title = response.title;
-      });
 
+
+  ngOnInit() {
+    
+    var userData = JSON.parse(localStorage.getItem("userProjects"))
+    console.log("User Data | ",userData);
+    
+    if(userData === null){
+      this.userProjects = [];
+    }else{
+      this.userProjects = userData.projects;
+    }
+    // this.projectService
+    //   .getAssignedProject(localStorage.getItem('empId'))
+    //   .subscribe(response => {
+    //     // this.incomingProject.project_id = response.project_id;
+    //     localStorage.setItem('pid', response.project_id.toString());
+    //     this.incomingProject.title = response.title;
+    //   });
+    
   }
 
   sickFieldChecked(event) {
@@ -127,13 +148,20 @@ export class AssignedprojectsComponent implements OnInit {
   logsuccess() {}
   onSubmit() {
     // console.log(this.hourform.value);
-    this.plog.loghours(this.hourform.value).subscribe(() => {
+    this.plog.logproject(this.hourform.value).subscribe(() => {
+    });
+   // alert('Successfully submitted');
+    // this.hourform.reset();
+    this.plog.logsick(this.hourform.value).subscribe(()=>{
+      
+    });
+    // this.hourform.reset();
+    this.plog.logvacation(this.hourform.value).subscribe(()=>{
       setTimeout(() => {
         this.showAlert = false;
       }, 3000);
       this.showAlert = true;
     });
-   // alert('Successfully submitted');
     this.hourform.reset();
   }
 
@@ -142,4 +170,6 @@ export class AssignedprojectsComponent implements OnInit {
     // Prevent Saturday and Sunday from being selected.
     return day !== 0 && day !== 6;
   }
+
+
 }

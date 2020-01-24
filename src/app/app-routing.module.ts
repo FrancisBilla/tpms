@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { Routes, RouterModule } from "@angular/router";
+import { Routes, RouterModule, ROUTER_CONFIGURATION } from "@angular/router";
 import { AppComponent } from "./app.component";
 import { DashboardComponent as D } from "./screens/admin/components/dashboard/dashboard.component";
 import { DashboardComponent } from "./screens/developer/components/dashboard/dashboard.component";
@@ -12,11 +12,11 @@ import { VerifyComponent } from "./screens/verify/verify.component";
 import { NavigationComponent } from "./screens/admin/navigation/navigation.component";
 import { NavComponent } from "./screens/developer/nav/nav.component";
 import { AddprojectComponent } from './screens/admin/components/addproject/addproject.component';
-import { ReportComponent } from './screens/admin/components/report/report.component';
 import { AreaComponent } from './screens/admin/components/area/area.component';
   
 
 const routes: Routes = [
+
   {
     path: "admin",
     component: NavigationComponent,
@@ -28,7 +28,7 @@ const routes: Routes = [
       {path:"reports", component:AreaComponent}
     ]
   },
-  { path: "verify", component: VerifyComponent },
+  { path: '', component: VerifyComponent },
   {
     path: "developer",
     component: NavComponent,

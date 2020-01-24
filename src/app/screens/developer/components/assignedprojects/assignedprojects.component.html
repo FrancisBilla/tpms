@@ -46,7 +46,40 @@
         <!-- Description Column -->
         <br />
         <ng-container matColumnDef="Web Services">
-          <th mat-header-cell *matHeaderCellDef style="font-size: xx-large;">{{incomingProject.title}} </th>
+
+          <!-- GET THE LIST OF ASSIGNED PROJECT -->
+
+         
+    <!-- <mat-list  *ngFor="let assignedproject of assignedprojects" role="list">
+      <span>{{assignedproject.title}}</span> <button>delete</button>
+    </mat-list> -->
+    <th mat-header-cell *matHeaderCellDef style="font-size: xx-medium;">
+
+      <!-- <mat-form-field>
+        <mat-label>Favorite food</mat-label>
+        <mat-select>
+          <mat-option *ngFor="let food of foods" [value]="food.value">
+            {{food.viewValue}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field> -->
+
+    <mat-form-field>
+      <!-- <mat-label>Assigned Project</mat-label> -->
+      <mat-select style="font-size: xx-medium;">
+        <!-- <mat-option>None</mat-option>        -->
+        <mat-option *ngFor="let project of userProjects" [value]="project">
+          {{project.project_name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </th>
+          <!-- <th mat-header-cell *matHeaderCellDef style="font-size: xx-large;">
+            {{incomingProject.title}} 
+          </th> -->
+          
+          
+          
           <td mat-cell *matCellDef="let element"> <input required="" placeholder="hours" autofocus type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" min="0" max="9"
               id="form3" formControlName="project_hours" class="form-control validate"></td>
         </ng-container>

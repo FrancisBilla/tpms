@@ -10,7 +10,11 @@
     display: flex;
     margin-left: 220px;
   }
-  
+  #selectedProject, p{
+    background-color: rgb(118, 156, 238);
+    border-radius: 30px ;
+    color: black;
+  }
   .example-header-image {
     background-image: url("https://images.unsplash.com/photo-1461988320302-91bde64fc8e4?ixid=2yJhcHBfaWQiOjEyMDd9&&fm=jpg&w=400&fit=max");
     background-size: cover;

@@ -8,10 +8,17 @@ table {
   width: 100%;
 }
 
+#ph4{
+  margin-left: 150px;
+  
+}
+
 .mat-table {
   overflow-x: scroll;
 }
-
+::ng-deep .cdk-overlay-container{
+  z-index: 1200 !important;
+}
 .mat-cell,
 .mat-header-cell {
   word-wrap: initial;
@@ -26,4 +33,24 @@ table {
 .mat-row,
 .mat-header-row {
   display: table-row;
+}
+
+
+/* Date css */
+.custom-day {
+  text-align: center;
+  padding: 0.185rem 0.25rem;
+  display: inline-block;
+  height: 2rem;
+  width: 2rem;
+}
+.custom-day.focused {
+  background-color: #e6e6e6;
+}
+.custom-day.range, .custom-day:hover {
+  background-color: rgb(2, 117, 216);
+  color: white;
+}
+.custom-day.faded {
+  background-color: rgba(2, 117, 216, 0.5);
 }
